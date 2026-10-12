@@ -1,149 +1,130 @@
-# 🎧 Mixtape — Tu primera app en React
+# 🎧 Mixtape 2.0 — Lección 2: Divide y Vencerás
 
-Los turnos en la Estación Umbral son largos y en el hangar solo se oye metal y soldadura. Nova quiere música mientras trabaja, así que la tripulación va a construir su propia app de música: **Mixtape**.
+**De:** Nova (Hangar 3, Estación Umbral)
+**Para:** Cadete de turno
 
-Este proyecto te acompaña **todo el Módulo 1**. Cada clase le agregamos piezas nuevas, así que guárdalo bien (idealmente en tu GitHub): la próxima clase arrancamos desde donde lo dejes hoy.
+Tu Mixtape funciona, pero la tarjeta solo sabe mostrar una canción: la que está en `cancion.js`. La tripulación pidió una playlist completa. Esta semana trabajas sobre **tu propio proyecto** de la Lección 1 y lo conviertes en una playlist.
 
-Hoy montamos la primera pieza: una tarjeta que muestra la canción que está sonando.
-
----
-
-## 🛠️ Cómo arrancar el proyecto
-
-1. Descomprime el proyecto y ábrelo en VS Code.
-2. Abre la terminal: menú **Terminal → New Terminal**.
-3. Instala las dependencias (crea la carpeta `node_modules`):
-
-```bash
-pnpm install
-```
-
-4. Arranca el servidor:
-
-```bash
-pnpm dev
-```
-
-5. Abre la dirección que muestra la terminal, normalmente `http://localhost:5173` (Ctrl + clic).
-6. Para apagarlo: **Ctrl + C** en la terminal.
-
-> ⚠️ La primera vez vas a ver una pantalla de error. Es a propósito: arreglarla es el Ticket 1.
-
-**Si algo falla:**
-
-- **La página sale en blanco:** abre la consola del navegador (F12 → Console) y lee el error.
-- **El puerto 5173 está ocupado:** Vite toma otro solo. Usa la dirección que muestra la terminal.
-- **`node -v` muestra una versión menor a 20.19:** descarga la versión LTS desde [nodejs.org](https://nodejs.org).
+> ¿No terminaste la Lección 1? Descarga la respuesta sugerida del repo oficial y arranca desde ahí.
 
 ---
 
-## 🗂️ Estructura del proyecto
+## 🧰 Paso 0 — Instalar el kit (5 min)
 
+Este ZIP no es un proyecto nuevo. Son piezas para tu Mixtape:
+
+| Del kit | Va en tu proyecto |
+|---|---|
+| `src/data/canciones.js` | `src/data/` (al lado de `cancion.js`, no borres nada) |
+| `src/estilos-l2.css` | `src/` |
+| `public/portadas/` (las 4 portadas) | `public/portadas/` (si te pregunta, reemplaza: son las mismas) |
+
+Después, en `src/main.jsx`, agrega esta línea **debajo** del import de `index.css`:
+
+```jsx
+import "./estilos-l2.css";
 ```
-mixtape/
-├── public/
-│   └── portadas/               ← imágenes de las portadas
-├── src/
-│   ├── components/
-│   │   ├── Encabezado.jsx      ← 🎫 Ticket 2
-│   │   └── TarjetaCancion.jsx  ← 🎫 Ticket 1 y 3
-│   ├── data/
-│   │   └── cancion.js          ← los datos de la canción
-│   ├── App.jsx                 ← 🎫 Ticket 2
-│   ├── index.css               ← estilos (ya listos, no los toques)
-│   └── main.jsx                ← monta la app (no se toca)
-└── index.html
-```
+
+Arranca con `pnpm dev` (si estás en otro computador, primero `pnpm install`). Todo debe verse igual que antes: los estilos nuevos se notan a partir del Ticket 1. Ten la consola abierta (F12).
 
 ---
 
-## 🎫 Tickets
+## 🎫 Ticket 1 — La tarjeta recibe props
 
-### Ticket 1 — Reparar la tarjeta
+**Archivos:** `src/components/TarjetaCancion.jsx` y `src/App.jsx`
 
-**Archivo:** `src/components/TarjetaCancion.jsx`
+En `TarjetaCancion.jsx`:
 
-La tarjeta tiene **3 errores de JSX**. Arréglalos uno por uno.
+1. Borra el `import { titulo, artista, ... } from "../data/cancion.js"`.
+2. Recibe esos mismos datos por props, con destructuring en los paréntesis:
 
-**Pistas:**
+```jsx
+function TarjetaCancion({ titulo, artista, album, duracion, portada, anio, reproducciones }) {
+```
 
-- Lee la pantalla de error de Vite: te dice el archivo y qué etiqueta está fallando.
-- Cuando la pantalla de error desaparezca, abre la consola (F12). Si hay un aviso en rojo, ahí hay otro error.
-- Repasa las reglas de JSX de la clase: cómo se cierran las etiquetas, cómo se escribe `class` y cómo se muestra el valor de una variable.
+3. Borra `<Controles />` y `<Siguiente />` de la tarjeta, junto con sus `import`. En una playlist, cada tarjeta tendría sus propios botones de play.
 
-**Listo cuando:** la tarjeta muestra la portada, el título **"Luces del Hangar"** (no la palabra "titulo") y la consola no tiene avisos.
+En `App.jsx`:
+
+4. Importa `Controles` y ponlo debajo de la tarjeta.
+5. Pásale a la tarjeta los datos de "Luces del Hangar", escritos a mano. Los dos primeros ya están; completa el resto con los datos de `canciones.js`:
+
+```jsx
+<TarjetaCancion
+    titulo="Luces del Hangar"
+    artista="Kuma & The Bolts"
+    // agrega aquí album, duracion, portada, anio y reproducciones
+/>
+```
+
+Recuerda: el texto va entre comillas y los números entre llaves (`anio={2019}`).
+
+✅ **Listo cuando:** ves la tarjeta completa, con "Lanzada hace..." funcionando y los controles abajo.
 
 ---
 
-### Ticket 2 — Conectar el encabezado
+## 🎫 Ticket 2 — La playlist completa
+
+**Archivo:** `src/App.jsx`
+
+1. Importa el array: `import { canciones } from "./data/canciones.js";`
+2. Cambia la tarjeta escrita a mano por un `.map()`, dentro de un `<section className="playlist">`. El título ya está; completa las demás props sacándolas de `cancion`:
+
+```jsx
+<section className="playlist">
+    {canciones.map((cancion) => (
+        <TarjetaCancion
+            titulo={cancion.titulo}
+            // agrega aquí las demás props: artista={cancion.artista} y así
+        />
+    ))}
+</section>
+```
+
+3. Guarda y mira la consola: aparece un aviso rojo que pide una `key`. Agrégale a `<TarjetaCancion>` la prop `key` con el dato de cada canción que nunca se repite.
+
+✅ **Listo cuando:** ves las 4 canciones y la consola **no** muestra el aviso rojo de `key`.
+
+---
+
+## 🎫 Ticket 3 — Favoritas
+
+**Archivos:** `src/App.jsx` y `src/components/TarjetaCancion.jsx`
+
+1. Pásale a la tarjeta la prop `favorita` desde el `.map()`.
+2. Recíbela en la tarjeta y, solo si es `true`, muestra esto justo debajo de la portada:
+
+```jsx
+<span className="etiqueta-favorita">❤️ Favorita</span>
+```
+
+Pista: "muestro esto o nada" se resuelve con `&&`.
+
+✅ **Listo cuando:** "Luces del Hangar" y "Bosque de los Anillos" tienen la etiqueta y las otras dos no.
+
+---
+
+## ⭐ Bonus — Contador en el encabezado
 
 **Archivos:** `src/components/Encabezado.jsx` y `src/App.jsx`
 
-El componente `Encabezado` ya está escrito, pero tiene dos problemas y nadie lo está usando.
-
-1. En `Encabezado.jsx`, envuelve el `h1` y el `p` en un `<header className="encabezado">`.
-2. Agrega `export default Encabezado;` al final del archivo.
-3. En `App.jsx`, impórtalo:
+Haz que `Encabezado` reciba una prop `total` y muestre debajo del lema:
 
 ```jsx
-import Encabezado from "./components/Encabezado.jsx";
+<p className="contador">4 canciones en la estación</p>
 ```
 
-4. Muéstralo dentro del `<main>`, justo arriba de `<TarjetaCancion />`.
+El 4 no va escrito a mano: sale de la prop. Desde `App`, pásale `total={canciones.length}`.
 
-**Listo cuando:** arriba de la tarjeta aparece el logo **Mixtape** con su frase.
+✅ **Listo cuando:** si agregas una canción al array, el número cambia solo.
 
 ---
 
-### Ticket 3 — Los datos, desde afuera
+## 🧯 Si algo falla
 
-**Archivos:** `src/components/TarjetaCancion.jsx` y `src/data/cancion.js`
-
-La tarjeta tiene los datos escritos adentro, pero ya existen en `src/data/cancion.js` como exports nombrados.
-
-1. En `TarjetaCancion.jsx`, borra las tres constantes (`titulo`, `artista` y `portada`).
-2. Impórtalas al principio del archivo:
-
-```jsx
-import { titulo, artista, portada } from "../data/cancion.js";
-```
-
-Los `../` son porque `TarjetaCancion.jsx` está dentro de `components/`: primero sales a `src/` y desde ahí entras a `data/`.
-
-3. En `cancion.js` hay dos datos más que la tarjeta no muestra: `album` y `duracion`. Agrégalos al `import` y muéstralos debajo del artista, cada uno en su párrafo:
-
-```jsx
-<p className="tarjeta-detalle">Álbum: {album}</p>
-<p className="tarjeta-detalle">Duración: {duracion}</p>
-```
-
-**Listo cuando:** la tarjeta se ve igual que antes, más el álbum y la duración, y `TarjetaCancion.jsx` ya no tiene datos escritos a mano.
-
----
-
-### ⭐ Bonus — Los controles del reproductor
-
-Crea un componente nuevo: `src/components/Controles.jsx`.
-
-- Una función `Controles` que devuelva este JSX:
-
-```jsx
-<div className="controles">
-    <button className="boton-control">⏮</button>
-    <button className="boton-control">▶</button>
-    <button className="boton-control">⏭</button>
-</div>
-```
-
-- Expórtalo por defecto, impórtalo en `TarjetaCancion.jsx` y muéstralo al final de la tarjeta, después de la duración.
-
-Los estilos ya están en `index.css`. Los botones todavía no hacen nada: en la lección 3 les damos vida.
-
----
-
-## ✅ Antes de terminar
-
-- [ ] La app corre con `pnpm dev` sin pantalla de error.
-- [ ] La consola (F12) no muestra avisos en rojo.
-- [ ] Se ven el encabezado y la tarjeta con título, artista, álbum y duración.
-- [ ] Guardaste el proyecto (o lo subiste a tu GitHub): lo necesitas la próxima clase.
+- **Error `X is not defined`:** usas una prop en el JSX que no está en las llaves de la función, o está mal escrita.
+- **Sale vacío donde debería ir un dato:** el nombre del atributo en `App` no coincide con el de las llaves.
+- **Error de `Siguiente` o `Controles`:** borraste la etiqueta pero quedó el `import`, o al revés.
+- **Aviso rojo `Each child in a list should have a unique "key" prop`:** falta la `key`, o la pusiste en otra etiqueta y no en `<TarjetaCancion>`.
+- **Una portada no carga:** el nombre del archivo en `public/portadas/` tiene que ser idéntico al de `canciones.js`.
+- **Las tarjetas salen una debajo de otra y angostas:** falta el `import "./estilos-l2.css";` en `main.jsx`, o quedó arriba del de `index.css`.
