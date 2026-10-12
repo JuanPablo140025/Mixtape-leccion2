@@ -1,8 +1,11 @@
-function Encabezado() {
+function Encabezado({ total }) {
     return (
         <header className="encabezado">
             <h1 className="logo">Mixtape</h1>
             <p className="lema">Música para los turnos largos de la estación</p>
+            {total !== undefined && (
+                <p className="contador">{total} canciones en la estación</p>
+            )}
         </header>
     );
 }
